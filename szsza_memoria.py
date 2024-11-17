@@ -1,92 +1,88 @@
-import tkinter as tk  # Tkinter modul az ablak és GUI elemek kezeléséhez
-from tkinter import messagebox  # Felugró ablakok kezelésére szolgál
-import random  # Véletlenszerű elemek generálására, például a kártyák keverésére
+import tkinter as tk
+from tkinter import messagebox
+import random
 
 class SzSzAKartya:
-    """Kártya osztály"""
+
     def __init__(self, szoveg):
-        self.szoveg = szoveg  # A kártya tartalma (például 🐻)
-        self.felforditva = False  # Boolean: jelzi, hogy a kártya felfordított állapotban van-e
+        self.szoveg = szoveg
+        self.felforditva = False
 
 class SzSzAMemoriaJatek:
-    """Memóriajáték osztály"""
+
     def __init__(self):
-        self.root = tk.Tk()  # Fő Tkinter ablak inicializálása
-        self.root.title("SzSzA Memóriajáték")  # Ablak címe
-        self.root.geometry("600x600")  # Ablak mérete
-        self.kartyak = []  # Lista a kártyaobjektumok tárolására
-        self.gombok = []  # Lista a kártyákhoz tartozó gombok tárolására
-        self.elso_valasztas = None  # Az elsőként választott kártya indexe
-        self.lepesek_szama = 0  # Lépésszámláló
+        self.root = tk.Tk()
+        self.root.title("SzSzA Memóriajáték")
+        self.root.geometry("600x600")
+        self.kartyak = []
+        self.gombok = []
+        self.elso_valasztas = None
+        self.lepesek_szama = 0
 
         # Kártyák inicializálása
-        self.kartyak_lista = list("🐻🐻🐔🐔🐉🐉🦏🦏🦍🦍🐎🐎🐅🐅🐢🐢")  # Páros kártyák listája
-        random.shuffle(self.kartyak_lista)  # Kártyák véletlenszerű sorrendbe rendezése
-        self.kartyak = [SzSzAKartya(szoveg) for szoveg in self.kartyak_lista]  # Kártyaobjektumok létrehozása
-
-        self.felulet_letrehozasa()  # A játékfelület létrehozása
+        self.kartyak_lista = list("🐻🐻🐔🐔🐉🐉🦏🦏🦍🦍🐎🐎🐅🐅🐢🐢")
+        random.shuffle(self.kartyak_lista)
+        self.kartyak = [SzSzAKartya(szoveg) for szoveg in self.kartyak_lista]
+        self.felulet_letrehozasa()
 
     def felulet_letrehozasa(self):
-        """A játék felületének létrehozása"""
-        for index, kartya in enumerate(self.kartyak):  # Végigmegyünk a kártyákon
+
+        for index, kartya in enumerate(self.kartyak):
             gomb = tk.Button(
-                self.root, text="?", width=8, height=4,  # Gomb mérete
-                font=("Arial", 16),  # Gomb betűtípusa és mérete
-                command=lambda idx=index: self.kartya_kattintas(idx)  # Minden gombhoz eseménykezelő
+                self.root, text="?", width=8, height=4,
+                font=("Arial", 16),
+                command=lambda idx=index: self.kartya_kattintas(idx)
             )
-            gomb.grid(row=index // 4, column=index % 4, padx=5, pady=5)  # Gombok rácsban elrendezve
-            self.gombok.append(gomb)  # Gomb hozzáadása a gombok listájához
+            gomb.grid(row=index // 4, column=index % 4, padx=5, pady=5)
+            self.gombok.append(gomb)
 
     def kartya_kattintas(self, index):
-        """Kattintás esemény kezelése"""
-        kartya = self.kartyak[index]  # A kattintott kártya
-        gomb = self.gombok[index]  # A kattintott kártyához tartozó gomb
 
-        if not kartya.felforditva:  # Ha a kártya nincs felfordítva
-            gomb.config(text=kartya.szoveg)  # Felfedjük a kártya tartalmát
-            kartya.felforditva = True  # Állapot: felfordítva
+        kartya = self.kartyak[index]
+        gomb = self.gombok[index]
 
-            if self.elso_valasztas is None:  # Ha ez az első választás
-                self.elso_valasztas = index  # Elmentjük az indexet
+        if not kartya.felforditva:
+            gomb.config(text=kartya.szoveg)
+            kartya.felforditva = True
+
+            if self.elso_valasztas is None:
+                self.elso_valasztas = index
             else:
-                # Második kattintás - ideiglenesen letiltjuk a gombokat
+
                 for btn in self.gombok:
                     btn.config(state="disabled")
-                self.root.after(1000, self.ellenorzes, index)  # 1 másodperc múlva ellenőrzés
+                self.root.after(1000, self.ellenorzes, index)
 
     def ellenorzes(self, masodik_index):
-        """Kártyapárok ellenőrzése"""
-        elso_index = self.elso_valasztas  # Az első kártya indexe
 
-        if elso_index is None:  # Ha nincs első kártya, kilépünk
+        elso_index = self.elso_valasztas
+
+        if elso_index is None:
             return
 
-        kartya1 = self.kartyak[elso_index]  # Első kártya
-        kartya2 = self.kartyak[masodik_index]  # Második kártya
+        kartya1 = self.kartyak[elso_index]
+        kartya2 = self.kartyak[masodik_index]
 
-        if kartya1.szoveg == kartya2.szoveg:  # Ha a két kártya egyezik
-            self.gombok[elso_index].config(state="disabled")  # Az első gombot letiltjuk
-            self.gombok[masodik_index].config(state="disabled")  # A második gombot is letiltjuk
+        if kartya1.szoveg == kartya2.szoveg:
+            self.gombok[elso_index].config(state="disabled")
+            self.gombok[masodik_index].config(state="disabled")
         else:
-            # Ha nem egyeznek, visszaállítjuk a kártyákat
-            self.gombok[elso_index].config(text="?")  # Első gomb szövegét visszaállítjuk
-            self.gombok[masodik_index].config(text="?")  # Második gomb szövegét is
-            kartya1.felforditva = False  # Első kártyát lefordítjuk
-            kartya2.felforditva = False  # Második kártyát is lefordítjuk
 
-        self.elso_valasztas = None  # Első választás törlése
-        self.lepesek_szama += 1  # Lépésszámláló növelése
+            self.gombok[elso_index].config(text="?")
+            self.gombok[masodik_index].config(text="?")
+            kartya1.felforditva = False
+            kartya2.felforditva = False
 
-        # Visszaállítjuk az engedélyezést a még nem felfordított gombokra
+        self.elso_valasztas = None
+        self.lepesek_szama += 1
+
         for btn, kartya in zip(self.gombok, self.kartyak):
             if not kartya.felforditva:
                 btn.config(state="normal")
 
-        # Ellenőrizzük, hogy minden kártya felfordult-e
-        if all(kartya.felforditva for kartya in self.kartyak):  # Ha minden kártya felfordítva
-            messagebox.showinfo("Győzelem", f"Gratulálok! Nyertél {self.lepesek_szama} lépésből!")  # Győzelmi üzenet
-            self.root.destroy()  # Alkalmazás bezárása
 
+        if all(kartya.felforditva for kartya in self.kartyak):
+            messagebox.showinfo("Győzelem", f"Gratulálok! Nyertél {self.lepesek_szama} lépésből!")
+            self.root.destroy()
     def run(self):
-        """Az alkalmazás futtatása"""
-        self.root.mainloop()  # Tkinter eseménykezelő ciklus indítása
+        self.root.mainloop()
