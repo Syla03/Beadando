@@ -19,7 +19,6 @@ class SzSzAMemoriaJatek:
         self.elso_valasztas = None
         self.lepesek_szama = 0
 
-        # Kártyák inicializálása
         self.kartyak_lista = list("🐻🐻🐔🐔🐉🐉🦏🦏🦍🦍🐎🐎🐅🐅🐢🐢")
         random.shuffle(self.kartyak_lista)
         self.kartyak = [SzSzAKartya(szoveg) for szoveg in self.kartyak_lista]
