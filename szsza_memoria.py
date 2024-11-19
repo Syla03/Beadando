@@ -22,9 +22,9 @@ class SzSzAMemoriaJatek:
         self.kartyak_lista = list("🐻🐻🐔🐔🐉🐉🦏🦏🦍🦍🐎🐎🐅🐅🐢🐢")
         random.shuffle(self.kartyak_lista)
         self.kartyak = [SzSzAKartya(szoveg) for szoveg in self.kartyak_lista]
-        self.felulet_letrehozasa()
+        self.SzSzAfelulet_letrehozasa()
 
-    def felulet_letrehozasa(self):
+    def SzSzAfelulet_letrehozasa(self):
 
         for index, kartya in enumerate(self.kartyak):
             gomb = tk.Button(
